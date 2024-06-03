@@ -1,0 +1,44 @@
+services:
+  snikket_proxy:
+    container_name: snikket-proxy
+    image: test-snikket-proxy
+    build:
+      context: ./snikket-web-proxy/
+      dockerfile: Dockerfile
+    network_mode: host
+    volumes:
+      - snikket_data:/snikket
+      - acme_challenges:/var/www/html/.well-known/acme-challenge
+    restart: "unless-stopped"
+  snikket_certs:
+    container_name: snikket-certs
+    image: test-cert-manager
+    build:
+      context: ./snikket-certs-manager/
+      dockerfile: Dockerfile
+    network_mode: host
+    volumes:
+      - snikket_data:/snikket
+      - acme_challenges:/var/www/.well-known/acme-challenge
+    restart: "unless-stopped"
+  snikket_portal:
+    container_name: snikket-portal
+    image: test-snikket-portal
+    build:
+      context: ./snikket-web-portal/
+      dockerfile: Dockerfile
+    network_mode: host
+    restart: "unless-stopped"
+  snikket_server:
+    container_name: snikket
+    image: test-snikket-server
+    build:
+      context: ./snikket-server/
+      dockerfile: Dockerfile
+    network_mode: host
+    volumes:
+      - snikket_data:/snikket
+    restart: "unless-stopped"
+volumes:
+  acme_challenges:
+  snikket_data:
